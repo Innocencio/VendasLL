@@ -12,27 +12,74 @@ import model.ModelProdutos;
  *
  * @author Jeffrey
  */
-public class DaoProdutos extends ConexaoMySql{
-    
-    public int salvarProdutosSao(ModelProdutos pModelProdutos){
-        try{
+public class DaoProdutos extends ConexaoMySql {
+/**
+ * Cadastrar um produto no banco
+ * @param pModelProdutos
+ * @return 
+ */
+
+    public int salvarProdutosDAO(ModelProdutos pModelProdutos) {
+        try {
             this.conectar();
             return this.insertSQL("INSERT INTO t_produto ("
                     + "pro_nome,"
                     + "pro_valor"
                     + "pro_estoque"
                     + ") VALUES ("
-                    + "'" + pModelProdutos.getProNome() + "'," 
-                    + "'" + pModelProdutos.getProValor() + "'," 
-                    + "'" + pModelProdutos.getProEstoque()+ "'," 
+                    + "'" + pModelProdutos.getProNome() + "',"
+                    + "'" + pModelProdutos.getProValor() + "',"
+                    + "'" + pModelProdutos.getProEstoque() + "',"
             );
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
-        }finally{
+        } finally {
             this.fecharConexao();
         }
     }
-    
-}
+    /**
+     * Excluir um produto do banco
+     * @param pIdProduto
+     * @return boolean 
+     */
 
+    public boolean excluirProdutoDAO(int pIdProduto) {
+        try {
+            this.conectar();
+            return this.executarUpdateDeleteSQL(
+                    "DELETE FROM t_produto WHERE pk_id_produto = '" + pIdProduto + "'"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            this.fecharConexao();
+        }
+
+    }
+    /**
+     * Alterar dados do produto
+     * @param pModelProdutos
+     * @return boolean
+     */
+    public boolean alterarProdutoDAO (ModelProdutos pModelProdutos){
+        try{
+            this.conectar();
+            return this.executarUpdateDeleteSQL(
+                    "UPDATE t_produto SET "
+                    + "pro_nome = '"+pModelProdutos.getProNome()+"',"
+                    + "pro_valor = '"+pModelProdutos.getProValor()+"',"
+                    + "pro_estoque = '"+pModelProdutos.getProEstoque()+"',"
+                    + " WHERE pk_id_produto= '"+pModelProdutos.getIdProduto()+"'"                  
+            );
+            
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        } finally {
+            this.fecharConexao();
+        }
+    }
+
+}
