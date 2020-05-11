@@ -6,6 +6,7 @@
 package DAO;
 
 import conexoes.ConexaoMySql;
+import java.util.ArrayList;
 import model.ModelProdutos;
 
 /**
@@ -13,11 +14,13 @@ import model.ModelProdutos;
  * @author Jeffrey
  */
 public class DaoProdutos extends ConexaoMySql {
-/**
- * Cadastrar um produto no banco
- * @param pModelProdutos
- * @return 
- */
+
+    /**
+     * Cadastrar um produto no banco
+     *
+     * @param pModelProdutos
+     * @return
+     */
 
     public int salvarProdutosDAO(ModelProdutos pModelProdutos) {
         try {
@@ -38,10 +41,12 @@ public class DaoProdutos extends ConexaoMySql {
             this.fecharConexao();
         }
     }
+
     /**
      * Excluir um produto do banco
+     *
      * @param pIdProduto
-     * @return boolean 
+     * @return boolean
      */
 
     public boolean excluirProdutoDAO(int pIdProduto) {
@@ -58,28 +63,94 @@ public class DaoProdutos extends ConexaoMySql {
         }
 
     }
+
     /**
      * Alterar dados do produto
+     *
      * @param pModelProdutos
      * @return boolean
      */
-    public boolean alterarProdutoDAO (ModelProdutos pModelProdutos){
-        try{
+    public boolean alterarProdutoDAO(ModelProdutos pModelProdutos) {
+        try {
             this.conectar();
             return this.executarUpdateDeleteSQL(
                     "UPDATE t_produto SET "
-                    + "pro_nome = '"+pModelProdutos.getProNome()+"',"
-                    + "pro_valor = '"+pModelProdutos.getProValor()+"',"
-                    + "pro_estoque = '"+pModelProdutos.getProEstoque()+"',"
-                    + " WHERE pk_id_produto= '"+pModelProdutos.getIdProduto()+"'"                  
+                    + "pro_nome = '" + pModelProdutos.getProNome() + "',"
+                    + "pro_valor = '" + pModelProdutos.getProValor() + "',"
+                    + "pro_estoque = '" + pModelProdutos.getProEstoque() + "',"
+                    + " WHERE pk_id_produto= '" + pModelProdutos.getIdProduto() + "'"
             );
-            
-        }catch (Exception e){
+
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         } finally {
             this.fecharConexao();
         }
+        
+       }
+        /**
+         * Retornar um produto pelo código
+         * @param pIdProduto
+         * @return modelProduto
+         */
+        public ModelProdutos retornarProdutoDAO(int pIdProduto){
+            ModelProdutos modelProdutos = new ModelProdutos();
+            try{
+            this.conectar();  
+            this.executarSQL("SELECT"
+                    + "pk_id_produto, "
+                    + "pro_nome, "
+                    + "pro_valor, "
+                    + "pro_estoque "
+                    + "FROM t_produto WHERE pk_id_produto = '"+pIdProduto+"'");
+            while (this.getResultSet().next()){
+                modelProdutos.setIdProduto(this.getResultSet().getInt(1));
+                modelProdutos.setProNome(this.getResultSet().getString(2));
+                modelProdutos.setProValor(this.getResultSet().getDouble(3));
+                modelProdutos.setProEstoque(this.getResultSet().getInt(4));
+                
+            }
+            
+            }catch(Exception e){
+                e.printStackTrace();         
+            }finally {
+                this.fecharConexao();
+            }
+             return modelProdutos;  
     }
+        
+        /**
+         * Retornar uma lista completa de produtos
+         * @return listaModelProdutos
+         */
+        public ArrayList<ModelProdutos> retornarListaProdutosDAO(){
+            ArrayList<ModelProdutos> listaModelProdutos = new ArrayList<>();
+            ModelProdutos modelProdutos = new ModelProdutos();
+            try{
+                this.conectar();
+                this.executarSQL("SELECT"
+                    + "pk_id_produto, "
+                    + "pro_nome, "
+                    + "pro_valor, "
+                    + "pro_estoque "
+                    + "FROM t_produto");
+                
+                while (this.getResultSet().next()){
+                    modelProdutos = new ModelProdutos();
+                    modelProdutos.setIdProduto(this.getResultSet().getInt(1));
+                    modelProdutos.setProNome(this.getResultSet().getString(2));
+                    modelProdutos.setProValor(this.getResultSet().getDouble(3));
+                    modelProdutos.setProEstoque(this.getResultSet().getInt(4));
+                    listaModelProdutos.add(modelProdutos);
+                }                
+            } catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                this.fecharConexao();
+            }
+            return listaModelProdutos;
+            
+        }
 
 }
