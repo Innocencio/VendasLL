@@ -5,17 +5,32 @@
  */
 package view;
 
+import controller.ControllerCliente;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.ModelCliente;
+
 /**
  *
  * @author Jeffrey
  */
 public class ViewCliente extends javax.swing.JFrame {
 
+    ControllerCliente controllerCliente = new ControllerCliente();
+    ModelCliente modelCliente = new ModelCliente();
+    ArrayList<ModelCliente> listaModelCliente = new ArrayList<>();
+    String salvarAlterar;
+
     /**
      * Creates new form ViewCliente
      */
     public ViewCliente() {
         initComponents();
+        carregarCliente();
+        setLocationRelativeTo(null);
+        this.desabilitaHabilitaCampos(false);
+        this.limparCampos();
     }
 
     /**
@@ -39,7 +54,6 @@ public class ViewCliente extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jtfCidade = new javax.swing.JTextField();
         jcbUF = new javax.swing.JComboBox<>();
-        jtfCEP = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -50,13 +64,19 @@ public class ViewCliente extends javax.swing.JFrame {
         jbNovo = new javax.swing.JButton();
         jbSalvar = new javax.swing.JButton();
         jbAlterar = new javax.swing.JButton();
+        jbExcluir = new javax.swing.JButton();
+        jtfCEP = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Clientes Laranja Lima");
 
         jLabel1.setText("Codigo:");
 
         jLabel3.setText("Nome:");
 
+        jtfCodigo.setEditable(false);
+        jtfCodigo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jtfCodigo.setEnabled(false);
         jtfCodigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jtfCodigoActionPerformed(evt);
@@ -90,10 +110,7 @@ public class ViewCliente extends javax.swing.JFrame {
 
         jtCliente.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Código", "Nome do Cliente", "Cidade", "Contato"
@@ -122,6 +139,11 @@ public class ViewCliente extends javax.swing.JFrame {
 
         jbCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/cancel.png"))); // NOI18N
         jbCancelar.setText("Cancelar");
+        jbCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbCancelarActionPerformed(evt);
+            }
+        });
 
         jbNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/new.png"))); // NOI18N
         jbNovo.setText("Novo");
@@ -133,9 +155,33 @@ public class ViewCliente extends javax.swing.JFrame {
 
         jbSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/save.png"))); // NOI18N
         jbSalvar.setText("Salvar");
+        jbSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbSalvarActionPerformed(evt);
+            }
+        });
 
         jbAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/edit.png"))); // NOI18N
         jbAlterar.setText("Alterar");
+        jbAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbAlterarActionPerformed(evt);
+            }
+        });
+
+        jbExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/delete.png"))); // NOI18N
+        jbExcluir.setText("Excluir");
+        jbExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbExcluirActionPerformed(evt);
+            }
+        });
+
+        try {
+            jtfCEP.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("#####-###")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -144,7 +190,25 @@ public class ViewCliente extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jtfCidade))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jcbUF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jtfCEP, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel8)
+                            .addComponent(jtfContato, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -166,32 +230,14 @@ public class ViewCliente extends javax.swing.JFrame {
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(jtfBairro)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jtfCidade, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jcbUF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addGap(108, 108, 108)
-                                .addComponent(jLabel6)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jtfCEP, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jtfContato)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jbCancelar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jbNovo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jbExcluir)
+                        .addGap(108, 108, 108)
+                        .addComponent(jbNovo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jbAlterar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jbSalvar)))
                 .addContainerGap())
         );
@@ -207,9 +253,9 @@ public class ViewCliente extends javax.swing.JFrame {
                     .addComponent(jtfCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtfNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel4))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtfEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -224,8 +270,8 @@ public class ViewCliente extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jtfCidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jcbUF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jtfCEP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jtfContato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jtfContato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtfCEP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -233,7 +279,8 @@ public class ViewCliente extends javax.swing.JFrame {
                     .addComponent(jbCancelar)
                     .addComponent(jbNovo)
                     .addComponent(jbSalvar)
-                    .addComponent(jbAlterar))
+                    .addComponent(jbAlterar)
+                    .addComponent(jbExcluir))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -265,7 +312,127 @@ public class ViewCliente extends javax.swing.JFrame {
 
     private void jbNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNovoActionPerformed
         // TODO add your handling code here:
+        this.desabilitaHabilitaCampos(true);
+        this.limparCampos();
+        salvarAlterar = "salvar";
     }//GEN-LAST:event_jbNovoActionPerformed
+    //Habilita ou desabilita campos e botões
+    private void desabilitaHabilitaCampos(boolean condicao){
+        jtfNome.setEnabled(condicao);
+        jtfEndereco.setEnabled(condicao);
+        jtfBairro.setEnabled(condicao);
+        jtfCidade.setEnabled(condicao);
+        jcbUF.setEnabled(condicao);
+        jtfCEP.setEnabled(condicao);
+        jtfContato.setEnabled(condicao);
+        jbSalvar.setEnabled(condicao);
+    }
+    //Limpar campos do formulário
+    private void limparCampos(){
+        jtfNome.setText("");
+        jtfEndereco.setText("");
+        jtfBairro.setText("");
+        jtfCidade.setText("");
+        jtfCEP.setText("");
+        jtfContato.setText("");        
+    }
+
+    private void jbSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalvarActionPerformed
+        // TODO add your handling code here:
+        if (salvarAlterar.equals("salvar")) {
+            modelCliente.setCliNome(this.jtfNome.getText());
+            modelCliente.setCliEndereco(this.jtfEndereco.getText());
+            modelCliente.setCliBairro(this.jtfBairro.getText());
+            modelCliente.setCliCidade(this.jtfCidade.getText());
+            modelCliente.setCliUf(this.jcbUF.getSelectedItem().toString());
+            modelCliente.setCliCep(this.jtfCEP.getText());
+            modelCliente.setCliContato(this.jtfContato.getText());
+
+            if (controllerCliente.salvarClienteController(modelCliente) > 0) {
+                JOptionPane.showMessageDialog(this, "Registro salvo com sucesso!", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
+                //Carregar os clientes na tabela
+                carregarCliente();
+                this.desabilitaHabilitaCampos(false);
+                this.limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao salvar registro", "ERRO", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            modelCliente.setIdCliente(Integer.parseInt(this.jtfCodigo.getText()));
+            modelCliente.setCliNome(this.jtfNome.getText());
+            modelCliente.setCliEndereco(this.jtfEndereco.getText());
+            modelCliente.setCliBairro(this.jtfBairro.getText());
+            modelCliente.setCliCidade(this.jtfCidade.getText());
+            modelCliente.setCliUf(this.jcbUF.getSelectedItem().toString());
+            modelCliente.setCliCep(this.jtfCEP.getText());
+            modelCliente.setCliContato(this.jtfContato.getText());
+
+            if (controllerCliente.atualizarClienteController(modelCliente)) {
+                JOptionPane.showMessageDialog(this, "Registro alterado com sucesso!", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
+                //Carregar os clientes na tabela
+                carregarCliente();
+                this.desabilitaHabilitaCampos(false);
+                this.limparCampos();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao alterar registro!", "ERRO", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jbSalvarActionPerformed
+
+    private void jbExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbExcluirActionPerformed
+        // TODO add your handling code here:
+        int linha = jtCliente.getSelectedRow();
+        int codigoCliente = (int) jtCliente.getValueAt(linha, 0);
+        if (controllerCliente.excluirClienteController(codigoCliente)) {
+            JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso", "Atenção", JOptionPane.WARNING_MESSAGE);
+            this.carregarCliente();
+        } else {
+            JOptionPane.showMessageDialog(this, "Erro ao excluir cliente", "ERRO", JOptionPane.ERROR_MESSAGE);
+        }
+
+
+    }//GEN-LAST:event_jbExcluirActionPerformed
+
+    private void jbAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAlterarActionPerformed
+        // TODO add your handling code here:
+        int linha = jtCliente.getSelectedRow();
+        int codigoCliente = (int) jtCliente.getValueAt(linha, 0);
+        salvarAlterar = "alterar";
+
+        modelCliente = controllerCliente.getClienteController(codigoCliente);
+        jtfCodigo.setText(String.valueOf(modelCliente.getIdCliente()));
+        jtfNome.setText(modelCliente.getCliNome());
+        jtfEndereco.setText(modelCliente.getCliEndereco());
+        jtfBairro.setText(modelCliente.getCliBairro());
+        jtfCidade.setText(modelCliente.getCliCidade());
+        jcbUF.setSelectedItem(modelCliente.getCliUf());
+        jtfCEP.setText(modelCliente.getCliCep());
+        jtfContato.setText(modelCliente.getCliContato());
+        this.desabilitaHabilitaCampos(true);
+
+    }//GEN-LAST:event_jbAlterarActionPerformed
+
+    private void jbCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbCancelarActionPerformed
+        // TODO add your handling code here:
+        this.desabilitaHabilitaCampos(false);
+        this.limparCampos();
+    }//GEN-LAST:event_jbCancelarActionPerformed
+    private void carregarCliente() {
+        listaModelCliente = controllerCliente.getListaClienteController();
+        DefaultTableModel modelo = (DefaultTableModel) this.jtCliente.getModel();
+        modelo.setNumRows(0);
+        int cont = listaModelCliente.size();
+        for (int i = 0; i < cont; i++) {
+            modelo.addRow(new Object[]{
+                listaModelCliente.get(i).getIdCliente(),
+                listaModelCliente.get(i).getCliNome(),
+                listaModelCliente.get(i).getCliCidade(),
+                listaModelCliente.get(i).getCliContato()
+
+            });
+        }
+
+    }
 
     /**
      * @param args the command line arguments
@@ -315,12 +482,13 @@ public class ViewCliente extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton jbAlterar;
     private javax.swing.JButton jbCancelar;
+    private javax.swing.JButton jbExcluir;
     private javax.swing.JButton jbNovo;
     private javax.swing.JButton jbSalvar;
     private javax.swing.JComboBox<String> jcbUF;
     private javax.swing.JTable jtCliente;
     private javax.swing.JTextField jtfBairro;
-    private javax.swing.JTextField jtfCEP;
+    private javax.swing.JFormattedTextField jtfCEP;
     private javax.swing.JTextField jtfCidade;
     private javax.swing.JTextField jtfCodigo;
     private javax.swing.JTextField jtfContato;

@@ -67,7 +67,7 @@ public class ViewProduto extends javax.swing.JFrame {
         jtfValor = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Produtos Pé de Laranja Lima");
+        setTitle("Estoque - Pé de Laranja Lima");
 
         jLabel1.setText("Código:");
 
@@ -258,7 +258,7 @@ public class ViewProduto extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -318,7 +318,7 @@ public class ViewProduto extends javax.swing.JFrame {
             this.jtfValor.setText(String.valueOf(modelProdutos.getProValor()));
             
         } catch (Exception e){
-            JOptionPane.showMessageDialog(this, "Código inválido ou nenhum registro selecionado!", "EAviso", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Código inválido ou nenhum registro selecionado!", "Aviso", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jbAlterarActionPerformed
 
@@ -407,6 +407,7 @@ public class ViewProduto extends javax.swing.JFrame {
         jtfNome.setEnabled(condicao);
         jtfEstoque.setEnabled(condicao);
         jtfValor.setEnabled(condicao);
+        jbSalvar.setEnabled(condicao);
     }
     
     
