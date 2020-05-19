@@ -339,7 +339,10 @@ public class ViewCliente extends javax.swing.JFrame {
 
     private void jbSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalvarActionPerformed
         // TODO add your handling code here:
-        if (salvarAlterar.equals("salvar")) {
+            try {
+                modelCliente.setIdCliente(Integer.parseInt(this.jtfCodigo.getText()));
+            } catch (NumberFormatException e) {
+            }          
             modelCliente.setCliNome(this.jtfNome.getText());
             modelCliente.setCliEndereco(this.jtfEndereco.getText());
             modelCliente.setCliBairro(this.jtfBairro.getText());
@@ -347,36 +350,29 @@ public class ViewCliente extends javax.swing.JFrame {
             modelCliente.setCliUf(this.jcbUF.getSelectedItem().toString());
             modelCliente.setCliCep(this.jtfCEP.getText());
             modelCliente.setCliContato(this.jtfContato.getText());
-
-            if (controllerCliente.salvarClienteController(modelCliente) > 0) {
-                JOptionPane.showMessageDialog(this, "Registro salvo com sucesso!", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
-                //Carregar os clientes na tabela
-                carregarCliente();
-                this.desabilitaHabilitaCampos(false);
-                this.limparCampos();
+        
+            if (salvarAlterar.equals("salvar")) {
+                if (controllerCliente.salvarClienteController(modelCliente) > 0) {
+                    JOptionPane.showMessageDialog(this, "Registro salvo com sucesso!", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
+                    //Carregar os clientes na tabela
+                    carregarCliente();
+                    this.desabilitaHabilitaCampos(false);
+                    this.limparCampos();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao salvar registro", "ERRO", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                JOptionPane.showMessageDialog(this, "Erro ao salvar registro", "ERRO", JOptionPane.ERROR_MESSAGE);
+            
+                if (controllerCliente.atualizarClienteController(modelCliente)) {
+                    JOptionPane.showMessageDialog(this, "Registro alterado com sucesso!", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
+                    //Carregar os clientes na tabela
+                    carregarCliente();
+                    this.desabilitaHabilitaCampos(false);
+                    this.limparCampos();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao alterar registro!", "ERRO", JOptionPane.ERROR_MESSAGE);
+                }
             }
-        } else {
-            modelCliente.setIdCliente(Integer.parseInt(this.jtfCodigo.getText()));
-            modelCliente.setCliNome(this.jtfNome.getText());
-            modelCliente.setCliEndereco(this.jtfEndereco.getText());
-            modelCliente.setCliBairro(this.jtfBairro.getText());
-            modelCliente.setCliCidade(this.jtfCidade.getText());
-            modelCliente.setCliUf(this.jcbUF.getSelectedItem().toString());
-            modelCliente.setCliCep(this.jtfCEP.getText());
-            modelCliente.setCliContato(this.jtfContato.getText());
-
-            if (controllerCliente.atualizarClienteController(modelCliente)) {
-                JOptionPane.showMessageDialog(this, "Registro alterado com sucesso!", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
-                //Carregar os clientes na tabela
-                carregarCliente();
-                this.desabilitaHabilitaCampos(false);
-                this.limparCampos();
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao alterar registro!", "ERRO", JOptionPane.ERROR_MESSAGE);
-            }
-        }
     }//GEN-LAST:event_jbSalvarActionPerformed
 
     private void jbExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbExcluirActionPerformed

@@ -20,6 +20,7 @@ public class ViewUsuario extends javax.swing.JFrame {
     ControllerUsuario controllerUsuario = new ControllerUsuario();
     ModelUsuario modelUsuario = new ModelUsuario();
     ArrayList<ModelUsuario> listaModelUsuario = new ArrayList<>();
+    String alterarSalvar;
 
     /**
      * Creates new form ViewUsuario
@@ -96,6 +97,11 @@ public class ViewUsuario extends javax.swing.JFrame {
 
         jbCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/cancel.png"))); // NOI18N
         jbCancelar.setText("Cancelar");
+        jbCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbCancelarActionPerformed(evt);
+            }
+        });
 
         jbExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/delete.png"))); // NOI18N
         jbExcluir.setText("Excluir");
@@ -107,9 +113,19 @@ public class ViewUsuario extends javax.swing.JFrame {
 
         jbAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/edit.png"))); // NOI18N
         jbAlterar.setText("Alterar");
+        jbAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbAlterarActionPerformed(evt);
+            }
+        });
 
         jbNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/new.png"))); // NOI18N
         jbNovo.setText("Novo");
+        jbNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbNovoActionPerformed(evt);
+            }
+        });
 
         jbSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/save.png"))); // NOI18N
         jbSalvar.setText("Salvar");
@@ -219,18 +235,61 @@ public class ViewUsuario extends javax.swing.JFrame {
 
     private void jbSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalvarActionPerformed
         // TODO add your handling code here:
+        try {
+            modelUsuario.setIdUsuario(Integer.parseInt(jtfCodigo.getText()));
+        } catch (NumberFormatException e) {
+        }     
         modelUsuario.setUsuLogin(jtfLogin.getText());
         modelUsuario.setUsuNome(jtfNome.getText());
         modelUsuario.setUsuSenha(jtfSenha.getText());
         
-        if (controllerUsuario.salvarUsuarioController(modelUsuario)>0) {
-            JOptionPane.showMessageDialog(this, "Registro salvo com sucesso!", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
-            carregarUsuarios();
-        }else{
-            JOptionPane.showMessageDialog(this, "Erro ao salvar registro", "ERRO", JOptionPane.ERROR_MESSAGE);
-        }
-        
+        if (alterarSalvar.equals("salvar")) {        
+            if (controllerUsuario.salvarUsuarioController(modelUsuario)>0) {
+                JOptionPane.showMessageDialog(this, "Registro salvo com sucesso!", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
+                carregarUsuarios();
+                limparCampos();
+                habilitarDesabilitarCampos(false);
+            }else{
+                JOptionPane.showMessageDialog(this, "Erro ao salvar registro", "ERRO", JOptionPane.ERROR_MESSAGE);
+            }
+            
+            } else {
+                if (controllerUsuario.atualizarUsuarioController(modelUsuario)) {
+                    JOptionPane.showMessageDialog(this, "Registro alterado com sucesso!", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
+                    carregarUsuarios();
+                    limparCampos();
+                    habilitarDesabilitarCampos(false);
+                }else{
+                    JOptionPane.showMessageDialog(this, "Erro ao alterar registro", "ERRO", JOptionPane.ERROR_MESSAGE);
+                }
+            }
     }//GEN-LAST:event_jbSalvarActionPerformed
+
+    private void jbCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbCancelarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbCancelarActionPerformed
+
+    private void jbAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAlterarActionPerformed
+        // TODO add your handling code here:
+        int linha = jtUsuario.getSelectedRow();
+        int codigo = (int) jtUsuario.getValueAt(linha, 0);
+        
+        modelUsuario = controllerUsuario.getUsuarioController(codigo);
+        jtfCodigo.setText(String.valueOf(modelUsuario.getIdUsuario()));
+        jtfNome.setText(modelUsuario.getUsuNome());
+        jtfLogin.setText(modelUsuario.getUsuLogin());
+        jtfSenha.setText(modelUsuario.getUsuSenha());
+        
+        alterarSalvar = "alterar";
+        habilitarDesabilitarCampos(true);
+    }//GEN-LAST:event_jbAlterarActionPerformed
+
+    private void jbNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNovoActionPerformed
+        // TODO add your handling code here:
+        limparCampos();
+        habilitarDesabilitarCampos(true);
+        alterarSalvar = "salvar";
+    }//GEN-LAST:event_jbNovoActionPerformed
 
     /**
      * @param args the command line arguments
