@@ -23,6 +23,14 @@ public class ControllerCliente {
 
     /**
     * recupera Cliente
+    * @param pNomeCliente
+    * @return ModelCliente
+    */
+    public ModelCliente getClienteController(String pNomeCliente){
+        return this.daoCliente.getClienteDAO(pNomeCliente);
+    }
+    /**
+    * recupera Cliente
     * @param pIdCliente
     * @return ModelCliente
     */

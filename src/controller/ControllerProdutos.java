@@ -43,13 +43,23 @@ public class ControllerProdutos {
     }
     
     /**
-     * Retornar poduto
+     * Retornar produto
      * @param pCodigo
      * @return  Model Produto
      */
     
     public ModelProdutos retornarProdutoController(int pCodigo){
         return this.daoProdutos.retornarProdutoDAO(pCodigo);
+    }
+    
+    /**
+     * Retornar produto
+     * @param pNomeProduto
+     * @return  Model Produto
+     */
+    
+    public ModelProdutos retornarProdutoController(String pNomeProduto){
+        return this.daoProdutos.retornarProdutoDAO(pNomeProduto);
     }
     
     /**
