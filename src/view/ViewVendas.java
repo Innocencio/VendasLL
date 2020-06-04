@@ -40,6 +40,8 @@ public class ViewVendas extends javax.swing.JFrame {
         listarClientes();
         setLocationRelativeTo(null);
         carregarVendas();
+        preencherCodigoClientePeloCombobox();
+        preencherCodigoProdutoPeloCombobox();
     }
 
     /**
@@ -183,12 +185,23 @@ public class ViewVendas extends javax.swing.JFrame {
 
         jbNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/new.png"))); // NOI18N
         jbNovo.setText("Novo");
+        jbNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbNovoActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("Valor total:");
 
         jLabel7.setText("Desconto:");
 
         jLabel9.setText("Nome do Produto:");
+
+        jtfDesconto.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jtfDescontoFocusLost(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -399,16 +412,14 @@ public class ViewVendas extends javax.swing.JFrame {
     private void jcbNomeClientePopupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jcbNomeClientePopupMenuWillBecomeInvisible
         // TODO add your handling code here:
         if (jcbNomeCliente.isPopupVisible()) {
-            modelCliente = controllerCliente.getClienteController(jcbNomeCliente.getSelectedItem().toString());
-            jtfCodigoCliente.setText(String.valueOf(modelCliente.getIdCliente()));
+            preencherCodigoClientePeloCombobox();
         } 
     }//GEN-LAST:event_jcbNomeClientePopupMenuWillBecomeInvisible
 
     private void jcbNomeProdutoPopupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_jcbNomeProdutoPopupMenuWillBecomeInvisible
         // TODO add your handling code here:
     if(jcbNomeProduto.isVisible()){
-        modelProdutos = controllerProdutos.retornarProdutoController(jcbNomeProduto.getSelectedItem().toString());
-        jtfCodigoProduto.setText(String.valueOf(modelProdutos.getIdProduto()));
+        preencherCodigoProdutoPeloCombobox();
     }    
     }//GEN-LAST:event_jcbNomeProdutoPopupMenuWillBecomeInvisible
 
@@ -453,8 +464,19 @@ public class ViewVendas extends javax.swing.JFrame {
                 modelProdutos.getProValor(),
                 quantidade * modelProdutos.getProValor()           
             });
+            somarValorTotalProdutos();
         }
     }//GEN-LAST:event_jbAdicionarActionPerformed
+
+    private void jtfDescontoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jtfDescontoFocusLost
+        // TODO add your handling code here:
+        somarValorTotalProdutos();
+    }//GEN-LAST:event_jtfDescontoFocusLost
+
+    private void jbNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNovoActionPerformed
+        // TODO add your handling code here:
+        limparFormulario();
+    }//GEN-LAST:event_jbNovoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -490,6 +512,17 @@ public class ViewVendas extends javax.swing.JFrame {
             }
         });
     }
+    
+    private void preencherCodigoClientePeloCombobox(){
+        modelCliente = controllerCliente.getClienteController(jcbNomeCliente.getSelectedItem().toString());
+        jtfCodigoCliente.setText(String.valueOf(modelCliente.getIdCliente()));
+    }
+    
+    private void preencherCodigoProdutoPeloCombobox(){
+        modelProdutos = controllerProdutos.retornarProdutoController(jcbNomeProduto.getSelectedItem().toString());
+        jtfCodigoProduto.setText(String.valueOf(modelProdutos.getIdProduto()));
+    }
+    
     /**
      * Preenche o Combo Box com todos os clientes
      */
@@ -511,6 +544,28 @@ public class ViewVendas extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * Aplica descontos ao valor final de venda
+     */
+    private void aplicarDescontos(){
+        jtfValorTotal.setText(String.valueOf(
+                Double.parseDouble(jtfValorTotal.getText()) - Double.parseDouble(jtfDesconto.getText())));
+    }
+    
+    /**
+     * Soma todos os produtos da venda
+     */
+    private void somarValorTotalProdutos(){
+    double soma = 0, valor;
+    int cont = jtProdutosVenda.getRowCount();
+        for (int i = 0; i < cont; i++) {
+            valor = (double) jtProdutosVenda.getValueAt(i, 4);
+            soma = soma + valor;           
+        }
+        jtfValorTotal.setText(String.valueOf(soma));
+        aplicarDescontos();
+   }
+    
     private void carregarVendas(){
     DefaultTableModel modelo = (DefaultTableModel) jtVendas.getModel();
     listaModelVendasCliente = controllerVendasCliente.getListaVendasClienteController();
@@ -522,6 +577,17 @@ public class ViewVendas extends javax.swing.JFrame {
             listaModelVendasCliente.get(i).getModelVendas().getVenDataVenda()
         });
         }
+    }
+    
+    /**
+     * Limpar formulário de venda
+     */
+    private void limparFormulario(){
+        jtfQuantidade.setText("");
+        jtfDesconto.setText("");
+        jtfValorTotal.setText("");
+        DefaultTableModel modelo = (DefaultTableModel) jtProdutosVenda.getModel();
+        modelo.setNumRows(0);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

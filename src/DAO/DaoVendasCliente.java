@@ -46,7 +46,7 @@ public class DaoVendasCliente extends ConexaoMySql {
                     + "t_cliente.cli_contato,"
                  + " FROM"
                      + " t_vendas INNER JOIN t_cliente "
-                        + "ON t_cliente.pk_id_cliente = t_vendas.fk_cliente; "
+                        + "ON t_cliente.pk_id_cliente = t_vendas.fk_cliente "
                 + ";"
             );
 
