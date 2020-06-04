@@ -9,12 +9,16 @@ import controller.ControllerCliente;
 import controller.ControllerProdutos;
 import controller.ControllerVendas;
 import controller.ControllerVendasCliente;
+import controller.ControllerVendasProdutos;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.ModelCliente;
 import model.ModelProdutos;
+import model.ModelVendas;
 import model.ModelVendasCliente;
+import model.ModelVendasProdutos;
+import util.BLDatas;
 
 /**
  *
@@ -30,6 +34,12 @@ public class ViewVendas extends javax.swing.JFrame {
     ArrayList<ModelVendasCliente> listaModelVendasCliente = new ArrayList<>();
     ControllerVendasCliente controllerVendasCliente = new ControllerVendasCliente();
     ControllerVendas controllerVendas = new ControllerVendas();
+    ModelVendas modelVendas = new ModelVendas();
+    BLDatas blDatas = new BLDatas();
+    ControllerVendasProdutos controllerVendasProdutos = new ControllerVendasProdutos();
+    ModelVendasProdutos modelVendasProdutos = new ModelVendasProdutos();
+    ArrayList<ModelVendasProdutos> listaModelVendasProdutos = new ArrayList<>();
+    
 
     /**
      * Creates new form ViewVendas
@@ -182,6 +192,11 @@ public class ViewVendas extends javax.swing.JFrame {
 
         jbSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/save.png"))); // NOI18N
         jbSalvar.setText("Salvar");
+        jbSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbSalvarActionPerformed(evt);
+            }
+        });
 
         jbNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/new.png"))); // NOI18N
         jbNovo.setText("Novo");
@@ -434,7 +449,7 @@ public class ViewVendas extends javax.swing.JFrame {
         int linha = jtVendas.getSelectedRow();
         int codigo = (int) jtVendas.getValueAt(linha, 0);
         if(controllerVendas.excluirVendasController(codigo)){
-            JOptionPane.showMessageDialog(this, "Venda exluída com sucesso", "Atenção", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Venda excluída com sucesso", "Atenção", JOptionPane.WARNING_MESSAGE);
             this.carregarVendas();
         }else{
             JOptionPane.showMessageDialog(this, "Erro ao excluir a venda", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -477,6 +492,46 @@ public class ViewVendas extends javax.swing.JFrame {
         // TODO add your handling code here:
         limparFormulario();
     }//GEN-LAST:event_jbNovoActionPerformed
+
+    private void jbSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSalvarActionPerformed
+        // TODO add your handling code here:
+        int codigoVenda = 0;
+        listaModelVendasProdutos = new ArrayList<>();
+        modelVendas.setCliente(Integer.parseInt(jtfCodigoCliente.getText()));
+        try {
+        modelVendas.setVenDataVenda(blDatas.converterDataParaDateUS(new java.util.Date(System.currentTimeMillis())));
+        } catch (Exception e) {
+        }
+        modelVendas.setVenValorLiquido(Double.parseDouble(jtfValorTotal.getText()));
+        modelVendas.setVenValorBruto(Double.parseDouble(jtfValorTotal.getText()) + Double.parseDouble(jtfDesconto.getText()));
+        modelVendas.setVenDesconto(Double.parseDouble(jtfDesconto.getText()));
+        //salvar venda
+        codigoVenda = controllerVendas.salvarVendasController(modelVendas);
+        if (codigoVenda > 0) {
+            JOptionPane.showMessageDialog(this, "Venda salva com sucesso", "Atenção", JOptionPane.WARNING_MESSAGE);    
+        } else {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar a venda", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        int cont = jtProdutosVenda.getRowCount();
+        for (int i = 0; i < cont; i++) {
+            modelVendasProdutos = new ModelVendasProdutos();
+            modelVendasProdutos.setProduto((int) jtProdutosVenda.getValueAt(i, 0));
+            modelVendasProdutos.setVendas(codigoVenda);
+            modelVendasProdutos.setVenProValor((double) jtProdutosVenda.getValueAt(i, 3));
+            modelVendasProdutos.setVenProQuantidade(Integer.parseInt(jtProdutosVenda.getValueAt(i, 2).toString()));
+            listaModelVendasProdutos.add(modelVendasProdutos);
+        }     
+        //salvar os produtos da venda
+        if(controllerVendasProdutos.salvarVendasProdutosController(listaModelVendasProdutos)){
+            JOptionPane.showMessageDialog(this, "Produtos da venda com sucesso", "Atenção", JOptionPane.WARNING_MESSAGE);
+            carregarVendas();
+            limparFormulario();
+        }else{
+            JOptionPane.showMessageDialog(this, "Erro ao salvar os produtos", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }//GEN-LAST:event_jbSalvarActionPerformed
 
     /**
      * @param args the command line arguments
